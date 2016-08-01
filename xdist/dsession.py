@@ -452,9 +452,6 @@ class ModuleLoadScheduling(LoadScheduling):
         for (i, test) in enumerate(self.collection):
             parts = test.split('::') # test example: "test_example1.py::TestClass::test_method"
             
-            if len(parts) != 3:
-                raise Exception('can not parse test %s' %parts )
-                
             test_class = parts[0] #TODO test_class should named test_module
             if test_class in self.my_collection:
                 self.my_collection[test_class].append(i)
