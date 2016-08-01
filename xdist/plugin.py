@@ -83,10 +83,23 @@ def pytest_cmdline_main(config):
         config.option.dist = "load"
     val = config.getvalue
     if not val("collectonly"):
-        usepdb = config.option.usepdb  # a core option
+        usepdb = config.getoption('usepdb')  # a core option
         if val("looponfail"):
             if usepdb:
                 raise pytest.UsageError("--pdb incompatible with --looponfail.")
         elif val("dist") != "no":
             if usepdb:
-                raise pytest.UsageError("--pdb incompatible with distributing tests.")
+                raise pytest.UsageError(
+                    "--pdb incompatible with distributing tests.")
+
+# -------------------------------------------------------------------------
+# fixtures
+# -------------------------------------------------------------------------
+
+
+@pytest.fixture(scope="session")
+def worker_id(request):
+    if hasattr(request.config, 'slaveinput'):
+        return request.config.slaveinput['slaveid']
+    else:
+        return 'master'

@@ -12,6 +12,9 @@ python module case will schedule to same subprocess, and setUpClass() will be in
 .. image:: http://img.shields.io/pypi/v/pytest-xdist.svg
    :target: https://pypi.python.org/pypi/pytest-xdist
 
+.. image:: https://ci.appveyor.com/api/projects/status/56eq1a1avd4sdd7e/branch/master?svg=true
+    :target: https://ci.appveyor.com/project/pytestbot/pytest-xdist
+
 xdist: pytest distributed testing plugin
 =========================================
 
@@ -189,17 +192,36 @@ at once.   The specifications strings use the `xspec syntax`_.
 
 .. _`execnet`: http://codespeak.net/execnet
 
+Identifying the worker process during a test
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+If you need to determine the identity of a worker process in
+a test or fixture, you may use the ``worker_id`` fixture to do so:
+
+.. code-block:: python
+
+    @pytest.fixture()
+    def user_account(worker_id):
+        """ use a different account in each xdist worker """
+        return "account_%s" % worker_id
+
+When ``xdist`` is disabled (running with ``-n0`` for example), then
+``worker_id`` will return ``"master"``.
+
 Specifying test exec environments in an ini file
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 pytest (since version 2.0) supports ini-style cofiguration.
 You can for example make running with three subprocesses
-your default like this::
+your default like this:
+
+.. code-block:: ini
 
     [pytest]
     addopts = -n3
 
-You can also add default environments like this::
+You can also add default environments like this:
+
+.. code-block:: ini
 
     [pytest]
     addopts = --tx ssh=myhost//python=python2.5 --tx ssh=myhost//python=python2.6
@@ -214,7 +236,9 @@ Specifying "rsync" dirs in an ini-file
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 In a ``tox.ini`` or ``setup.cfg`` file in your root project directory
-you may specify directories to include or to exclude in synchronisation::
+you may specify directories to include or to exclude in synchronisation:
+
+.. code-block:: ini
 
     [pytest]
     rsyncdirs = . mypkg helperpkg
